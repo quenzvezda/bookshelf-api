@@ -82,11 +82,23 @@ const addBookHandler = (request, h) => {
     }
 };
 
-const getAllBooksHandler = (request, h) => ({
-    status: 'success',
-    data: {
-        books,
-    },
-});
+const getAllBooksHandler = (request, h) => {
+    // Mengambil hanya properti id, name, dan publisher dari setiap buku
+    const simplifiedBooks = books.map((book) => ({
+        id: book.id,
+        name: book.name,
+        publisher: book.publisher,
+    }));
+
+    // Membuat response dengan status 'success' dan data berisi array books
+    const response = h.response({
+        status: 'success',
+        data: {
+            books: simplifiedBooks, // Pastikan array ini memiliki dua buku jika ingin test ke-5 berhasil
+        },
+    });
+    response.code(200);
+    return response;
+};
 
 module.exports = { addBookHandler, getAllBooksHandler }; // Eksport handler agar bisa digunakan di file lain
