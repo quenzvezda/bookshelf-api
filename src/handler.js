@@ -101,4 +101,36 @@ const getAllBooksHandler = (request, h) => {
     return response;
 };
 
-module.exports = { addBookHandler, getAllBooksHandler }; // Eksport handler agar bisa digunakan di file lain
+const getBookByIdHandler = (request, h) => {
+    // Gunakan request.params.bookId, bukan request.params.id
+    const { bookId } = request.params;
+
+    const book = books.filter((b) => b.id === bookId)[0]; // Dapatkan buku berdasarkan bookId
+
+    // Periksa apakah buku ditemukan
+    if (book) {
+        return {
+            status: 'success',
+            data: {
+                book,
+            }
+        };
+    }
+
+    // Jika buku tidak ditemukan, kembalikan response dengan status 404
+    return h.response({
+        status: 'fail',
+        message: 'Buku tidak ditemukan',
+    }).code(404);
+};
+
+const editBookByIdHandler = (request, h) => {
+
+};
+
+module.exports = {
+    addBookHandler,
+    getAllBooksHandler,
+    getBookByIdHandler,
+    editBookByIdHandler,
+}; // Eksport handler agar bisa digunakan di file lain
