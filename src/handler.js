@@ -83,26 +83,40 @@ const addBookHandler = (request, h) => {
 };
 
 const getAllBooksHandler = (request, h) => {
-    // Mengambil hanya properti id, name, dan publisher dari setiap buku
-    const simplifiedBooks = books.map((book) => ({
+    const { name, reading, finished } = request.query;
+
+    const filteredBooks = books.filter((book) => {
+        // Filter by name if provided
+        if (name && !book.name.toLowerCase().includes(name.toLowerCase())) {
+            return false;
+        }
+        // Filter by reading status if provided
+        if (reading !== undefined && book.reading !== Boolean(Number(reading))) {
+            return false;
+        }
+        // Filter by finished status if provided
+        if (finished !== undefined && book.finished !== Boolean(Number(finished))) {
+            return false;
+        }
+        return true;
+    }).map((book) => ({
         id: book.id,
         name: book.name,
         publisher: book.publisher,
     }));
 
-    // Membuat response dengan status 'success' dan data berisi array books
     const response = h.response({
         status: 'success',
         data: {
-            books: simplifiedBooks, // Pastikan array ini memiliki dua buku jika ingin test ke-5 berhasil
+            books: filteredBooks
         },
     });
     response.code(200);
+
     return response;
 };
 
 const getBookByIdHandler = (request, h) => {
-    // Gunakan request.params.bookId, bukan request.params.id
     const { bookId } = request.params;
 
     const book = books.filter((b) => b.id === bookId)[0]; // Dapatkan buku berdasarkan bookId
