@@ -2,7 +2,6 @@ const { nanoid } = require('nanoid');
 const books = require('./books');
 
 const addBookHandler = (request, h) => {
-    // Destructuring assignment untuk mendapatkan properti yang dibutuhkan dari request.payload
     const {
         name,
         year,
@@ -14,7 +13,6 @@ const addBookHandler = (request, h) => {
         reading,
     } = request.payload;
 
-    // Validasi untuk name
     if (!name) {
         const response = h.response({
             status: 'fail',
@@ -24,7 +22,6 @@ const addBookHandler = (request, h) => {
         return response;
     }
 
-    // Mengecek apakah pageCount lebih besar atau sama dengan readPage
     if (pageCount < readPage) {
         const response = h.response({
             status: 'fail',
@@ -34,12 +31,11 @@ const addBookHandler = (request, h) => {
         return response;
     }
 
-    const id = nanoid(16); // Menghasilkan ID unik
-    const insertedAt = new Date().toISOString(); // Mendapatkan tanggal dan waktu saat ini dalam format ISO string
+    const id = nanoid(16);
+    const insertedAt = new Date().toISOString();
     const updatedAt = insertedAt;
-    const finished = pageCount === readPage; // Jika pageCount sama dengan readPage, maka buku dianggap telah selesai dibaca
+    const finished = pageCount === readPage;
 
-    // Membuat objek buku baru
     const newBook = {
         id,
         name,
@@ -55,13 +51,10 @@ const addBookHandler = (request, h) => {
         updatedAt,
     };
 
-    // Menambahkan buku baru ke dalam array books
     books.push(newBook);
 
-    // Mengecek apakah buku berhasil ditambahkan
     const isSuccess = books.some((book) => book.id === id);
 
-    // Jika buku berhasil ditambahkan
     if (isSuccess) {
         const response = h.response({
             status: 'success',
@@ -70,14 +63,14 @@ const addBookHandler = (request, h) => {
                 bookId: id,
             },
         });
-        response.code(201); // Mengirimkan status code 201 untuk created
+        response.code(201);
         return response;
-    } else { // Jika buku gagal ditambahkan
+    } else {
         const response = h.response({
             status: 'error',
             message: 'Buku gagal ditambahkan',
         });
-        response.code(500); // Mengirimkan status code 500 untuk internal server error
+        response.code(500);
         return response;
     }
 };
@@ -86,15 +79,12 @@ const getAllBooksHandler = (request, h) => {
     const { name, reading, finished } = request.query;
 
     const filteredBooks = books.filter((book) => {
-        // Filter by name if provided
         if (name && !book.name.toLowerCase().includes(name.toLowerCase())) {
             return false;
         }
-        // Filter by reading status if provided
         if (reading !== undefined && book.reading !== Boolean(Number(reading))) {
             return false;
         }
-        // Filter by finished status if provided
         if (finished !== undefined && book.finished !== Boolean(Number(finished))) {
             return false;
         }
@@ -119,9 +109,8 @@ const getAllBooksHandler = (request, h) => {
 const getBookByIdHandler = (request, h) => {
     const { bookId } = request.params;
 
-    const book = books.filter((b) => b.id === bookId)[0]; // Dapatkan buku berdasarkan bookId
+    const book = books.filter((b) => b.id === bookId)[0];
 
-    // Periksa apakah buku ditemukan
     if (book) {
         return {
             status: 'success',
@@ -131,7 +120,6 @@ const getBookByIdHandler = (request, h) => {
         };
     }
 
-    // Jika buku tidak ditemukan, kembalikan response dengan status 404
     return h.response({
         status: 'fail',
         message: 'Buku tidak ditemukan',
@@ -209,4 +197,4 @@ module.exports = {
     getBookByIdHandler,
     editBookByIdHandler,
     deleteBookByIdHandler,
-}; // Eksport handler agar bisa digunakan di file lain
+};
