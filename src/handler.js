@@ -172,7 +172,7 @@ const deleteBookByIdHandler = (request, h) => {
     const index = books.findIndex((book) => book.id === bookId);
 
     if (index !== -1) {
-        notes.splice(index, 1);
+        books.splice(index, 1);
         const response = h.response({
             status: 'success',
             message: 'Buku berhasil dihapus',
